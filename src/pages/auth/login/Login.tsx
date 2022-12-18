@@ -114,7 +114,7 @@ const Login = () => {
               Sign in with Google
             </Button>
           </div>
-          <a href="/sign-up">Don't have an account? Create here!</a>
+          <a href="/sign-up">Don't have an account?</a>
         </div>
       </div>
     </div>

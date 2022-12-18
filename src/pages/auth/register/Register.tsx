@@ -163,7 +163,7 @@ const Register = () => {
               Sign up with Google
             </Button>
           </div>
-          <a href="/sign-in">Already have an account!</a>
+          <a href="/sign-in">Already have an account?</a>
         </div>
       </div>
     </div>
