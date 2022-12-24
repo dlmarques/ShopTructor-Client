@@ -1,0 +1,118 @@
+.createProject {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  .left {
+    height: 100vh;
+    width: 50%;
+    background-color: theme("colors.orange");
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    h1 {
+      font-family: theme("fontFamily.pacifico");
+      font-weight: 400;
+      font-size: 5vw;
+      color: theme("colors.cream");
+    }
+    h4 {
+      font-family: theme("fontFamily.nunito");
+      font-weight: 400;
+      font-size: 1.5vw;
+      color: theme("colors.cream");
+    }
+  }
+  .right {
+    height: 100vh;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .box {
+      width: 500px;
+      height: 380px;
+      background-color: theme("colors.cream");
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+      border-radius: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      h3 {
+        font-family: theme("fontFamily.pacifico");
+        font-weight: 400;
+        font-size: 40px;
+        line-height: 70px;
+        color: theme("colors.orange");
+        padding-top: 30px;
+        user-select: none;
+      }
+
+      .form {
+        padding: 40px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        font-family: "Nunito", sans-serif;
+
+        .projectName {
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          .projectNameLabel {
+            font-size: 14px;
+            padding-left: 18px;
+            padding-bottom: 1px;
+            -webkit-transition: font-size 1s;
+            -moz-transition: font-size 1s;
+            -o-transition: font-size 1s;
+            transition: font-size 1s;
+            position: absolute;
+            bottom: 40px;
+          }
+        }
+
+        .country {
+          width: 300px;
+          height: 40px;
+          border-radius: 50px;
+          border: 2px solid theme("colors.orange");
+          position: relative;
+          select {
+            border: none !important;
+            background: transparent;
+            padding-left: 10px;
+            height: 100%;
+            width: 100%;
+
+            &:focus-visible {
+              border: none !important;
+              outline: none !important;
+            }
+          }
+          .countryLabel {
+            font-size: 14px;
+            padding-left: 15px;
+            padding-bottom: 1px;
+            -webkit-transition: font-size 1s;
+            -moz-transition: font-size 1s;
+            -o-transition: font-size 1s;
+            transition: font-size 1s;
+            position: absolute;
+            bottom: 40px;
+          }
+        }
+
+        input {
+          width: 300px;
+
+          &:focus-visible {
+            border-color: theme("colors.orange");
+            box-shadow: none;
+          }
+        }
+      }
+    }
+  }
+}

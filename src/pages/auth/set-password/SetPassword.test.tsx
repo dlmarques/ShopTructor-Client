@@ -1,10 +1,10 @@
 import * as React from "react";
 import { render } from "@testing-library/react";
 
-import Register from "./Register";
+import SetPassword from "./SetPassword";
 
-describe("Register", () => {
+describe("Create Finish Register", () => {
   it("renders App component", () => {
-    render(<Register />);
+    render(<SetPassword />);
   });
 });
