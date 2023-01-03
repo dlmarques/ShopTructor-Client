@@ -1,22 +1,26 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "../pages/auth/login/Login";
-import Register from "../pages/auth/register/Register";
-import ForgotPassword from "../pages/auth/forgot-password/ForgotPassword";
-import SetPassword from "../pages/auth/set-password/SetPassword";
 import Dashboard from "../modules/dashboard/Dashboard";
 import CreateFirstProject from "../pages/auth/create-first-project/CreateFirstProject";
+import PrivateRoute from "./PrivateRoute";
+import LandingPage from "../pages/landing page/LandingPage";
+import Auth from "../pages/auth/login/Auth";
 
 const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/sign-up" element={<Register />} />
-        <Route path="/sign-in" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/sign-in" element={<Auth />} />
         <Route path="/create-first-project" element={<CreateFirstProject />} />
-        <Route path="/finish-register" element={<SetPassword />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/" element={<LandingPage />} />
       </Routes>
     </Router>
   );

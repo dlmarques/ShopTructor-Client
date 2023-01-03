@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
-import AppRoutes from "./routes/Routes";
+import React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
+
+import AppRoutes from "./routes/Routes";
 
 function App() {
   return (

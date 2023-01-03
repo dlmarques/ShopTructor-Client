@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="100" viewBox="0 0 400 100">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 14.019px;
+        fill: #ee712b;
+        font-family: Pacifico;
+      }
+    </style>
+  </defs>
+  <text id="ShopTructor" class="cls-1" transform="translate(0 67.287) scale(5.261 5.106)">ShopTructor</text>
+</svg>

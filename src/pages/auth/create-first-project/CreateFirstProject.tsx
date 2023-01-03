@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux/es/exports";
 //components
 import { Button, Input } from "@chakra-ui/react";
 import { CountryDropdown } from "react-country-region-selector";
 
 //styles
 import styles from "./create-project.module.scss";
+import axios from "axios";
+import { authActions } from "../../../store/auth/auth";
 
 const CreateFirstProject = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState("");
   const [country, setCountry] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleStep = () => {
-    if (projectName && country) {
+    const tokenId = sessionStorage.getItem("google-tokenId");
+    if (tokenId) {
+      handleGoogleLogin();
+    } else {
       setIsLoading(true);
       sessionStorage.setItem("projectName", projectName);
       sessionStorage.setItem("country", country);
@@ -24,6 +30,51 @@ const CreateFirstProject = () => {
         navigate("/finish-register");
       }, 4000);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    setIsLoading(true);
+    const userGoogle = {
+      tokenId: sessionStorage.getItem("google-tokenId"),
+      accessToken: sessionStorage.getItem("google-accessToken"),
+      username: sessionStorage.getItem("google-username"),
+      email: sessionStorage.getItem("google-email"),
+      avatar: sessionStorage.getItem("google-avatar"),
+      projectName: projectName,
+      country: country,
+    };
+
+    axios
+      .post(`${process.env.REACT_APP_API_URL}auth/register`, {
+        username: userGoogle.username,
+        email: userGoogle.email,
+        projectName: userGoogle.projectName,
+        country: userGoogle.country,
+        isGoogleAuth: true,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(1);
+          sessionStorage.removeItem("google-username");
+          sessionStorage.removeItem("google-email");
+          sessionStorage.removeItem("google-avatar");
+          sessionStorage.removeItem("google-accessToken");
+          sessionStorage.removeItem("google-tokenId");
+          localStorage.setItem("authToken", userGoogle.accessToken || "");
+          dispatch(authActions.login());
+          setTimeout(() => {
+            setIsLoading(false);
+            navigate("/auth-callback");
+          }, 4000);
+        }
+      })
+      .catch((err) => {
+        sessionStorage.setItem("error", err.response.data);
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/auth-error");
+        }, 4000);
+      });
   };
 
   return (
