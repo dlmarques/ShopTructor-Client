@@ -11,7 +11,7 @@ const Auth = () => {
 
   return (
     <div>
-      <Navigate to="/dashboard" />
+      <Navigate to="/app/dashboard" />
     </div>
   );
 };

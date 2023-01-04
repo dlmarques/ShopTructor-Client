@@ -1,80 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux/es/exports";
+import { toast } from "react-toastify";
+
 //components
 import { Button, Input } from "@chakra-ui/react";
 import { CountryDropdown } from "react-country-region-selector";
 
 //styles
 import styles from "./create-project.module.scss";
-import axios from "axios";
-import { authActions } from "../../../store/auth/auth";
+import { useAuth0 } from "@auth0/auth0-react";
+import { registerUser } from "../../../services/auth-services";
+import { registerProject } from "../../../services/project-service";
+import { checkUser } from "../../../services/app-services";
 
 const CreateFirstProject = () => {
-  const dispatch = useDispatch();
+  const { user, isLoading, isAuthenticated } = useAuth0();
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState("");
   const [country, setCountry] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [formIsLoading, setFormIsLoading] = useState(false);
 
-  const handleStep = () => {
-    const tokenId = sessionStorage.getItem("google-tokenId");
-    if (tokenId) {
-      handleGoogleLogin();
-    } else {
-      setIsLoading(true);
-      sessionStorage.setItem("projectName", projectName);
-      sessionStorage.setItem("country", country);
+  useEffect(() => {
+    initApp();
+  }, [isLoading, isAuthenticated]);
+
+  const initApp = async () => {
+    if (!isLoading && isAuthenticated) {
+      const response = await checkUser(user?.email || "");
+
+      if (response) {
+        navigate("/app/dashboard");
+      }
+    }
+  };
+
+  const registerUserStep = async () => {
+    setFormIsLoading(true);
+    const currentUser = {
+      name: user?.name,
+      email: user?.email,
+      picture: user?.picture,
+      email_verified: user?.email_verified,
+      locale: user?.locale,
+    };
+    const response = await registerUser(currentUser);
+    if (response === 200) {
       setTimeout(() => {
-        setIsLoading(false);
-        navigate("/finish-register");
+        setFormIsLoading(false);
+        registerProjectStep();
+      }, 4000);
+    } else {
+      setTimeout(() => {
+        setFormIsLoading(false);
       }, 4000);
     }
   };
 
-  const handleGoogleLogin = () => {
-    setIsLoading(true);
-    const userGoogle = {
-      tokenId: sessionStorage.getItem("google-tokenId"),
-      accessToken: sessionStorage.getItem("google-accessToken"),
-      username: sessionStorage.getItem("google-username"),
-      email: sessionStorage.getItem("google-email"),
-      avatar: sessionStorage.getItem("google-avatar"),
-      projectName: projectName,
+  const registerProjectStep = async () => {
+    setFormIsLoading(true);
+    const project = {
+      email: user?.email,
+      name: projectName,
       country: country,
     };
-
-    axios
-      .post(`${process.env.REACT_APP_API_URL}auth/register`, {
-        username: userGoogle.username,
-        email: userGoogle.email,
-        projectName: userGoogle.projectName,
-        country: userGoogle.country,
-        isGoogleAuth: true,
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(1);
-          sessionStorage.removeItem("google-username");
-          sessionStorage.removeItem("google-email");
-          sessionStorage.removeItem("google-avatar");
-          sessionStorage.removeItem("google-accessToken");
-          sessionStorage.removeItem("google-tokenId");
-          localStorage.setItem("authToken", userGoogle.accessToken || "");
-          dispatch(authActions.login());
-          setTimeout(() => {
-            setIsLoading(false);
-            navigate("/auth-callback");
-          }, 4000);
-        }
-      })
-      .catch((err) => {
-        sessionStorage.setItem("error", err.response.data);
-        setTimeout(() => {
-          setIsLoading(false);
-          navigate("/auth-error");
-        }, 4000);
+    const response = await registerProject(project);
+    if (response === 200) {
+      toast.success("Project created!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
       });
+      navigate("/app/dashboard");
+    } else {
+      console.log("error");
+    }
   };
 
   return (
@@ -132,8 +136,8 @@ const CreateFirstProject = () => {
                 background: "#EE712B",
                 transition: "all .3s ease",
               }}
-              onClick={() => handleStep()}
-              isLoading={isLoading}
+              onClick={() => registerUserStep()}
+              isLoading={formIsLoading}
             >
               Next
             </Button>

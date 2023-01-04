@@ -1,0 +1,12 @@
+.loadingContainer {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .loadingLabel {
+    font-size: 2rem;
+    font-family: theme("fontFamily.nunito");
+  }
+}
