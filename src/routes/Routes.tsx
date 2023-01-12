@@ -7,6 +7,7 @@ import Auth from "../pages/auth/login/Auth";
 import App from "../pages/app/App";
 
 const AppRoutes = () => {
+  console.log(process.env.REACT_APP_REDIRECT_URL);
   return (
     <Router>
       <Routes>
