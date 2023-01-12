@@ -16,13 +16,17 @@ import { checkUser } from "../../../services/app-services";
 const CreateFirstProject = () => {
   const { user, isLoading, isAuthenticated } = useAuth0();
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
   const [projectName, setProjectName] = useState("");
   const [country, setCountry] = useState("");
   const [formIsLoading, setFormIsLoading] = useState(false);
+  const [isThirdParty, setIsThirdParty] = useState(false);
+  const [isValid, setIsValid] = useState(true);
 
   useEffect(() => {
+    checkAuthMethod();
     initApp();
-  }, [isLoading, isAuthenticated]);
+  }, [isLoading, isAuthenticated, isThirdParty]);
 
   const initApp = async () => {
     if (!isLoading && isAuthenticated) {
@@ -34,14 +38,20 @@ const CreateFirstProject = () => {
     }
   };
 
+  const checkAuthMethod = () => {
+    user?.sub?.includes("auth0")
+      ? setIsThirdParty(false)
+      : setIsThirdParty(true);
+  };
+
   const registerUserStep = async () => {
     setFormIsLoading(true);
     const currentUser = {
-      name: user?.name,
+      name: isThirdParty ? user?.name : username,
       email: user?.email,
       picture: user?.picture,
       email_verified: user?.email_verified,
-      locale: user?.locale,
+      locale: country,
     };
     const response = await registerUser(currentUser);
     if (response === 200) {
@@ -52,6 +62,16 @@ const CreateFirstProject = () => {
     } else {
       setTimeout(() => {
         setFormIsLoading(false);
+        toast.error(response.data, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }, 4000);
     }
   };
@@ -61,7 +81,6 @@ const CreateFirstProject = () => {
     const project = {
       email: user?.email,
       name: projectName,
-      country: country,
     };
     const response = await registerProject(project);
     if (response === 200) {
@@ -77,7 +96,16 @@ const CreateFirstProject = () => {
       });
       navigate("/app/dashboard");
     } else {
-      console.log("error");
+      toast.error(response.data, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -88,11 +116,38 @@ const CreateFirstProject = () => {
         <h4>Build the most powerful e-commerce with us</h4>
       </div>
       <div className={styles.right}>
-        <div className={styles.box}>
+        <div
+          className={styles.box}
+          style={{ height: isThirdParty ? "380px" : "450px" }}
+        >
           <h3>ShopTructor</h3>
           <div className={styles.form}>
-            <div className={styles.projectName}>
-              <label htmlFor="projectName" className={styles.projectNameLabel}>
+            {!isThirdParty && (
+              <>
+                <div className={styles.input}>
+                  <label htmlFor="username" className={styles.label}>
+                    Choose an username.
+                  </label>
+
+                  <Input
+                    type="text"
+                    name="username"
+                    id="username"
+                    placeholder="Choose an username."
+                    css={{
+                      borderRadius: "50px",
+                      border: "2px solid #EE712B",
+                    }}
+                    _hover={{
+                      border: "2px solid #EE712B",
+                    }}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+            <div className={styles.input}>
+              <label htmlFor="projectName" className={styles.label}>
                 What's your project name?
               </label>
 
@@ -113,14 +168,14 @@ const CreateFirstProject = () => {
             </div>
 
             <div className={styles.country}>
-              <label htmlFor="projectName" className={styles.countryLabel}>
+              <label htmlFor="projectName" className={styles.label}>
                 Select your country
               </label>
 
               <CountryDropdown
                 value={country}
                 onChange={(val) => setCountry(val)}
-                showDefaultOption={false}
+                showDefaultOption={true}
               />
             </div>
 
